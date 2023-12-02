@@ -20,7 +20,7 @@ namespace aeos
 	
 	
 	export template <typename T>
-	concept readable_container = std::derived_from<T, Container_base>;
+	concept container = std::derived_from<T, Container_base>;
 
 
 	export struct EmptyContainer: private Container_base
