@@ -9,26 +9,23 @@ namespace aeos
 	export struct Container_base
 	{
 		template <typename T>
-		using Get = void;
-
-		template <typename T>
-		using Contain = True;
-
-		template <typename T>
-		inline static constexpr bool contain = true;
-	};
-	
-	
-	export template <typename T>
-	concept container = std::derived_from<T, Container_base>;
-
-
-	export struct EmptyContainer: private Container_base
-	{
-		template <typename T>
 		using Contain = False;
 
 		template <typename T>
 		inline static constexpr bool contain = false;
 	};
+	
+	export template <typename T>
+	concept container = std::derived_from<T, Container_base>;
+
+
+	//It contains nothing,
+	//so there is no need to define Get<>.
+	export struct GettableContainer_base: Container_base {};
+
+	//We want container<> implies gettable_container,
+	//so container<T> is necessary.
+	export template <typename T>
+	concept gettable_container = container<T>
+		&& std::derived_from<T, GettableContainer_base>;
 }//namespace

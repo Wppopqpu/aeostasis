@@ -8,9 +8,13 @@ import aeostasis.utility.value_container;
 
 namespace aeos
 {
+	export template <typename T>
+	concept fetchable_container = gettable_container<T>; 
+
+
 	export struct FetchOrder_base
 	{
-		template <container T>
+		template <fetchable_container T>
 		using Type = void;
 	};
 
@@ -22,14 +26,14 @@ namespace aeos
 	export template <typename T>
 	struct FetchIdentity: FetchOrder_base
 	{
-		template <container C>
+		template <fetchable_container C>
 		using Type = T;
 	};
 
 	export template <fetch_order T>
 	struct FetchIdentity<T>: FetchOrder_base
 	{
-		template <container C>
+		template <fetchable_container C>
 		using Type = typename T::Type;
 	};
 
@@ -40,7 +44,7 @@ namespace aeos
 	export template <typename T>
 	struct FetchByKey: FetchOrder_base
 	{
-		template <container C>
+		template <fetchable_container C>
 		using Type = typename C::template Get<T>;
 	};
 
@@ -48,7 +52,7 @@ namespace aeos
 	export template <std::size_t INDEX>
 	struct FetchByIndex: FetchOrder_base
 	{
-		template <container C>
+		template <fetchable_container C>
 		using Type = typename C::template Get<Index<INDEX>>;
 	};
 
@@ -56,7 +60,7 @@ namespace aeos
 	export template <typename T>
 	struct FetchAsItself: FetchOrder_base
 	{
-		template <container C>
+		template <fetchable_container C>
 		using Type = T;
 	};
 
@@ -64,7 +68,7 @@ namespace aeos
 	export template <typename T, T VALUE>
 	struct FetchAsValue: FetchOrder_base
 	{
-		template <container C>
+		template <fetchable_container C>
 		using Type = ValueContainer<T, VALUE>;
 	};
 
@@ -73,7 +77,7 @@ namespace aeos
 		, typename... ORDERS>
 	struct FetchAsTemplate: FetchOrder_base
 	{
-		template <container C>
+		template <fetchable_container C>
 		using Type = TEMPLATE<Fetch<ORDERS, C>...>;
 	};
 }//namespace
