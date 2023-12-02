@@ -1,0 +1,27 @@
+//This file defines a set of operations.
+//They can be applied to writtable containers.
+//Some operations unique to particular containers are not defined here.
+//Check the files where the containers are defined.
+export module aeostasis.container.operations;
+import <concepts>;
+
+namespace aeos
+{
+	export struct Operation_base {};
+
+	export template <typename T>
+	concept operation = std::derived_from<T, Operation_base>;
+
+
+	export template <typename KEY, typename VALUE>
+	struct SetAt: Operation_base {};
+
+	export template <typename KEY, typename VALUE>
+	struct ModifyAt: Operation_base {};
+
+	export template <typename KEY, typename VALUE>
+	struct AddAt: Operation_base {};
+
+	export template <typename KEY>
+	struct EraseAt: Operation_base {};
+}//namespace
