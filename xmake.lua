@@ -1,7 +1,9 @@
 add_rules("mode.debug", "mode.release")
+set_languages("c++20")
 
 target("aeostasis")
-    set_kind("binary")
+    set_kind("static")
+	add_files("src/*.mpp", { install = true })
     add_files("src/*.cpp")
 
 --
