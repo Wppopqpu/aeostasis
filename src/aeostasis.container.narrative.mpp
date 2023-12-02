@@ -23,4 +23,12 @@ namespace aeos
 	concept readable_container = std::derived_from<T, Container_base>;
 
 
+	export struct EmptyContainer: private Container_base
+	{
+		template <typename T>
+		using Contain = False;
+
+		template <typename T>
+		inline static constexpr bool contain = false;
+	};
 }//namespace
