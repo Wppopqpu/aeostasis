@@ -1,0 +1,26 @@
+export module aeostasis.container.narrative;
+import aeostasis.utility.value_container;
+import <concepts>;
+
+namespace aeos
+{
+	//The base class of all the containers.
+	//Implement the default behaviour.
+	export struct Container_base
+	{
+		template <typename T>
+		using Get = void;
+
+		template <typename T>
+		using Contain = True;
+
+		template <typename T>
+		inline static constexpr bool contain = true;
+	};
+	
+	
+	export template <typename T>
+	concept readable_container = std::derived_from<T, Container_base>;
+
+
+}//namespace
