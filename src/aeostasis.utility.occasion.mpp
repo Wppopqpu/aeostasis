@@ -17,4 +17,11 @@ namespace aeos
 	export
 	template <bool BOOL, typename A, typename B>
 	using If = typename If_impl<BOOL, A, B>::Type;
+
+	// You can use Assert<> to invoke an error.
+	export template <bool BOOL = false>
+	struct Assert
+	{
+		static_assert(BOOL);
+	};
 } // namespace
