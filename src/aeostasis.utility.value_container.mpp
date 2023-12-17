@@ -46,10 +46,10 @@ namespace aeos
 	concept boolean = specific_value_container<T, bool>;
 
 	export template <bool BOOL>
-	using Bool = ValueContainer<bool, BOOL>;
+	using Boolean = ValueContainer<bool, BOOL>;
 
-	export using True = Bool<true>;
-	export using False = Bool<false>;
+	export using True = Boolean<true>;
+	export using False = Boolean<false>;
 
 
 	//Alias for std::size_t.
