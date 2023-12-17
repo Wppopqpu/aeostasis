@@ -34,7 +34,7 @@ namespace aeos
 	Assert<std::same_as
 		< MapB::Get<Index<2>>
 		, Template<Index<1>, Index<3>>
-		>, MapA::Get<Index<2>>
+		>, MapB::Get<Index<2>>
 	>;
 }
 
