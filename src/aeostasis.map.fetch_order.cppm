@@ -23,36 +23,41 @@ namespace aeos
 	
 
 	export template <typename T>
-	struct Fetch: FetchOrder_base
+	struct Fetch
 	{
-		template <map M> using Get = T;
+		template <map M, map M1 = M> using Get = T;
 	};
 	export template <fetch_order T>
-	struct Fetch<T>: FetchOrder_base
+	struct Fetch<T>
 	{
-		template <map M> using Get = typename T::template Get<M>;
+		template <map M, map M1 = M> using Get = typename T::template Get<M>;
 	};
-	export template <typename T, map M>
-	using FetchFrom = typename Fetch<T>::template Get<M>;
+	export template <typename T>
+	struct Fetch<Fetch<T>>
+	{
+		template <map M, map M1 = M> using Get = typename Fetch<T>::template Get<M1>;
+	};
+	export template <typename T, map M, map M1 = M>
+	using From = typename Fetch<T>::template Get<M, M1>;
 
 	export template <typename T>
-	struct FetchAsItself: FetchOrder_base
+	struct AsItself: FetchOrder_base
 	{
 		template <map M> using Get = T;
 	};
 
 	export template <typename KEY>
-	struct FetchAt: FetchOrder_base
+	struct At: FetchOrder_base
 	{
 		template <map M> using Get = typename M::template Get<KEY>;
 	};
 
 	export template <template <typename...> typename TEMPLATE
 		, typename... ARGS>
-	struct FetchAsTemplate: FetchOrder_base
+	struct AsTemplate: FetchOrder_base
 	{
-		template <map M> using Get = FetchFrom
-			<TEMPLATE<FetchFrom<ARGS, M>...>, M>;
+		template <map M> using Get = From
+			<TEMPLATE<From<ARGS, M>...>, M>;
 	};
 	
 } // Namespace.

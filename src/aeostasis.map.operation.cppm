@@ -24,33 +24,46 @@ namespace aeos
 
 
 	// The implementation.
+
+	export struct AppliedMap_base {};
+	export template <typename T>
+	concept applied_map = std::derived_from<T, AppliedMap_base> || map<T>;
 	
-	export template <map M, typename FIRST, typename... ORDERS>
+	export template <applied_map M, typename FIRST, typename... ORDERS>
 	struct Apply: Apply<Apply<M, FIRST>, ORDERS...> {};
 
+	template <map T>
+	struct Wrapper: T, AppliedMap_base 
+	{
+		template <typename K, map M1>
+		using Get = typename T::template Get<K>;
+	};
+
+	export template <map M,typename FIRST, typename...ORDERS> 
+	struct Apply<M, FIRST, ORDERS...>: Apply<Apply<Wrapper<M, FIRST>, ORDERS...> {};
+
 	export template <map M, typename KEY, typename VALUE>
-	struct Apply<M, SetAt<KEY, VALUE>>
+	struct Apply<M, SetAt<KEY, VALUE>>: AppliedMap_base
 	{
 	private:
 		using This = Apply<M, SetAt<KEY, VALUE>>;
 
-		template <bool BOOL, typename K>
+		template <typename K, map M1>
 		struct Get_impl
 		{
-			using Type = typename M::template Get<K>;
+			using Type = typename M::template Get<K, M1>;
 		};
-		template <typename K>
-		struct Get_impl<true, K>
+		template <typename K, map M1>
+			requires std::same_as<From<K, M, M1>, From<KEY, M, M1>>
+		struct Get_impl<K, M1>
 		{
-			using Type = FetchFrom<VALUE, M>;
+			using Type = From<VALUE, M, M1>;
 		};
 
 	public:
 		
-		template <typename K>
-		using Get =
-			typename Get_impl<std::same_as<FetchFrom<K, M>, FetchFrom<KEY, M>>
-				, K>::Type;
+		template <typename K, map M1 = M>
+		using Get = Get_impl<K, M1>::Type;
 
 		template <typename... ORDERS>
 		using Applied = aeos::Apply<This, ORDERS...>;
@@ -75,27 +88,26 @@ namespace aeos
 	};
 
 	export template <map M, typename KEY>
-	struct Apply<M, EraseAt<KEY>>
+	struct Apply<M, EraseAt<KEY>>: AppliedMapBase
 	{
 	private:
 
 		using This = Apply<M, EraseAt<KEY>>;
 
-		template <bool BOOL, typename K>
+		template <typename K, map M1>
 		struct Get_impl {};
 
-		template <typename K>
-		struct Get_impl<true, K>
+		template <typename K, map M1>
+			requires (!std::same_as<From<K, M, M1>, From<KEY, M, M1>>)
+		struct Get_impl<K, M1>
 		{
-			using Type = typename M::template Get<K>;
+			using Type = typename M::template Get<K, M1>;
 		};
 
 	public:
 
-		template <typename K>
-		using Get = typename Get_impl
-			< !std::same_as<FetchFrom<K, M>, FetchFrom<KEY, M>>
-			, K>::Type;
+		template <typename K, map M1 = M>
+		using Get = typename Get_impl<K, M1>::Type;
 
 		template <typename... ORDERS>
 		using Applied = Apply<This, ORDERS...>;

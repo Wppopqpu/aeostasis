@@ -11,7 +11,7 @@ namespace aeos
 
 	using Map1 = EmptyMap::Applied<AddAt<int, int>>;
 
-	Assert<std::same_as<Map1::Get<int>, int>>;
+	static_assert(std::same_as<Map1::Get<int>, int>);
 
 	//static_assert(false);
 
@@ -20,22 +20,34 @@ namespace aeos
 		, AddAt<Index<2>, Index<3>>
 		, AddAt<Index<10>, Index<2>>
 		>;
+
+	static_assert(std::same_as<MapA::Get<Index<10>>, Index<2>>);
+
+
 	using MapB = MapA::Applied
 		< ModifyAt
-			< FetchAt<Index<10>>
-			, FetchAsTemplate
+			< At<Index<10>>
+			, AsTemplate
 				< Template
-				, FetchAt<Index<0>>
-				, FetchAt<Index<2>>
+				, At<Index<0>>
+				, At<Index<2>>
 				>
 			>
 		>;
 
-	Assert<std::same_as
+	static_assert(std::same_as
 		< MapB::Get<Index<2>>
 		, Template<Index<1>, Index<3>>
-		>, MapB::Get<Index<2>>
-	>;
+		>);
+
+
+	using MapC = EmptyMap::Applied
+		< AddAt<int, Fetch<At<long>>>
+		, SetAt<long, unsigned>
+		, ModifyAt<long, short>
+		>;
+	static_assert(std::same_as<short, MapC::Get<long>>);
+	static_assert(std::same_as<short, MapC::Get<int>>);
 }
 
 

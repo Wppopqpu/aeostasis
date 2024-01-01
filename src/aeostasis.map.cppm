@@ -10,7 +10,7 @@ namespace aeos
 	export struct EmptyMap
 	{
 		// Always invokes an error.
-		template <typename T> using Get = Assert<false, T>;
+		template <typename T, map M1 = EmptyMap> using Get = Assert<false, T>;
 
 		template <typename... ORDERS>
 		using Applied = Apply<EmptyMap, ORDERS...>;
