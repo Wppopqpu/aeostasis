@@ -1,4 +1,4 @@
-export module aeostasis:test;
+module aeostasis;
 import aeostasis.map;
 import aeostasis.utility;
 import <concepts>;
