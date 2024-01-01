@@ -4,7 +4,7 @@ set_policy("build.c++.modules", true)
 
 target("aeostasis")
     set_kind("static")
-	add_files("src/*.mpp", { install = true })
+	add_files("src/*.cppm", { install = true })
     add_files("src/*.cpp")
 
 --
