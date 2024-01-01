@@ -5,14 +5,16 @@ export import aeostasis.utility.value_container;
 
 namespace aeos
 {
-	// Take advantage of template template parameter,
-	// to offer requirement.
 	// You can only provide Get<> if you want to create your own map;
 	// every map that aeos provides also has Applied<>, Contains<>, contains<>,
 	// which along with Get<> can be accessed by class name.
-	template <template <typename> typename T> struct Checker {};
+	template <typename T> struct Helper
+	{
+		// Notice that Get<> may have several parameters.
+		template <typename K> using Type = typename T::template Get<K>;
+	};
 	export template <typename T> concept map = requires {
-		typename Checker<T::template Get>;
+		typename Helper<T>;
 	};
 
 	export template <map T, typename K>
