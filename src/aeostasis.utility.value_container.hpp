@@ -1,20 +1,20 @@
-module;
-#include <cstddef>
-export module aeostasis.utility.value_container;
-import <concepts>;
+# pragma once
+# include <cstddef>
+# include <concepts>
 namespace aeos
 {
 	//Base classes.
 
-	struct ValueContainer_base {};
+	namespace
+	{
+		struct ValueContainer_base {};
 	
-	template <typename T>
-	struct SpecificValueContainer_base: ValueContainer_base {};
-
+		template <typename T>
+		struct SpecificValueContainer_base: ValueContainer_base {};
+	}
 
 	//The protagonist.
 
-	export
 	template <typename T, T VALUE>
 	struct ValueContainer: SpecificValueContainer_base<T>
 	{
@@ -25,7 +25,6 @@ namespace aeos
 
 	//Some concepts.
 
-	export
 	template <typename T>
 	concept value_container = std::derived_from<T, ValueContainer_base>
 		&& requires {
@@ -33,7 +32,6 @@ namespace aeos
 			{ T::value } -> std::same_as<typename T::Type>;
 		};
 
-	export
 	template <typename T, typename VALUE_TYPE>
 	concept specific_value_container = value_container<T>
 		&& std::derived_from<T, SpecificValueContainer_base<VALUE_TYPE>>;
@@ -41,23 +39,22 @@ namespace aeos
 
 	//Alias for bool.
 
-	export
 	template <typename T>
 	concept boolean = specific_value_container<T, bool>;
 
-	export template <bool BOOL>
+	template <bool BOOL>
 	using Boolean = ValueContainer<bool, BOOL>;
 
-	export using True = Boolean<true>;
-	export using False = Boolean<false>;
+	using True = Boolean<true>;
+	using False = Boolean<false>;
 
 
 	//Alias for std::size_t.
 	
-	export
+
 	template <typename T>
 	concept index = specific_value_container<T, std::size_t>;
 
-	export template<std::size_t VALUE>
+	template<std::size_t VALUE>
 	using Index = ValueContainer<std::size_t, VALUE>;
 }//namespace

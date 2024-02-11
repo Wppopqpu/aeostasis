@@ -1,10 +1,9 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c++20")
-set_policy("build.c++.modules", true)
 
 target("aeostasis")
     set_kind("static")
-	add_files("src/*.cppm", { install = true })
+	add_headerfiles("src/*.hpp")
     add_files("src/*.cpp")
 
 --

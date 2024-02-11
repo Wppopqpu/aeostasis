@@ -1,20 +1,22 @@
-export module aeostasis.utility.occasion;
+# pragma once
 
 namespace aeos
 {
-	template <bool BOOL, typename A, typename B>
-	struct If_impl
+	namespace
 	{
-		using Type = A;
-	};
-	
-	template <typename A, typename B>
-	struct If_impl<false, A, B>
-	{
-		using Type = B;
-	};
+		template <bool BOOL, typename A, typename B>
+		struct If_impl
+		{
+			using Type = A;
+		};
 
-	export
+		template <typename A, typename B>
+			struct If_impl<false, A, B>
+		{
+			using Type = B;
+		};
+	}
+
 	template <bool BOOL, typename A, typename B>
 	using If = typename If_impl<BOOL, A, B>::Type;
 
@@ -25,10 +27,13 @@ namespace aeos
 	// template <typename T> using Get = Assert<my_concept<T>, T>;
 	//
 	// It is also used to prevent instantiation
-	template <bool BOOL, typename T>
-	struct Assert_impl {};
-	template <typename T>
-	struct Assert_impl<true, T> { using Type = T; };
-	export template <bool BOOL = false, typename T = void>
+	namespace
+	{
+		template <bool BOOL, typename T>
+		struct Assert_impl {};
+		template <typename T>
+		struct Assert_impl<true, T> { using Type = T; };
+	}
+	template <bool BOOL = false, typename T = void>
 	using Assert = typename Assert_impl<BOOL, T>::Type;
 } // namespace

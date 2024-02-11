@@ -2,11 +2,11 @@
 // Generally, you write code like this:
 //
 // using Neomap = EmptyMap::Apply<SetAt<Key, Value>>;
-export module aeostasis.map.operation;
-import aeostasis.map.conceptual;
-import aeostasis.map.fetch_order;
-import aeostasis.utility.occasion;
-import <concepts>;
+# pragma once
+# include "aeostasis.map.conceptual.hpp"
+# include "aeostasis.map.fetch_order.hpp"
+# include "aeostasis.utility.occasion.hpp"
+# include <concepts>
 
 namespace aeos
 {
@@ -14,35 +14,38 @@ namespace aeos
 	
 	// AddAt<> requires that the key does NOT exist;
 	// ModifyAt<> requires that the key does exist.
-	export template <typename KEY, typename VALUE> struct SetAt {};
-	export template <typename KEY, typename VALUE> struct AddAt {};
-	export template <typename KEY, typename VALUE> struct ModifyAt {};
+	template <typename KEY, typename VALUE> struct SetAt {};
+	template <typename KEY, typename VALUE> struct AddAt {};
+	template <typename KEY, typename VALUE> struct ModifyAt {};
 
 	// RemoveAt<> requires that the key does exist.
-	export template <typename KEY> struct EraseAt {};
-	export template <typename KEY> struct RemoveAt {};
+	template <typename KEY> struct EraseAt {};
+	template <typename KEY> struct RemoveAt {};
 
 
 	// The implementation.
 
-	export struct AppliedMap_base {};
-	export template <typename T>
+	struct AppliedMap_base {};
+	template <typename T>
 	concept applied_map = std::derived_from<T, AppliedMap_base> || map<T>;
 	
-	export template <applied_map M, typename FIRST, typename... ORDERS>
+	template <applied_map M, typename FIRST, typename... ORDERS>
 	struct Apply: Apply<Apply<M, FIRST>, ORDERS...> {};
 
-	template <map T>
-	struct Wrapper: T, AppliedMap_base 
+	namespace
 	{
-		template <typename K, map M1>
-		using Get = typename T::template Get<K>;
-	};
+		template <map T>
+		struct Wrapper: T, AppliedMap_base 
+		{
+			template <typename K, map M1>
+			using Get = typename T::template Get<K>;
+		};
+	}
 
-	export template <map M,typename FIRST, typename...ORDERS> 
+	template <map M,typename FIRST, typename...ORDERS> 
 	struct Apply<M, FIRST, ORDERS...>: Apply<Apply<Wrapper<M, FIRST>, ORDERS...> {};
 
-	export template <map M, typename KEY, typename VALUE>
+	template <map M, typename KEY, typename VALUE>
 	struct Apply<M, SetAt<KEY, VALUE>>: AppliedMap_base
 	{
 	private:
@@ -75,19 +78,19 @@ namespace aeos
 		using Contains = aeos::Contains<This, K>;
 	};
 
-	export template <map M, typename KEY, typename VALUE>
+	template <map M, typename KEY, typename VALUE>
 	struct Apply<M, AddAt<KEY, VALUE>>: Apply<M, SetAt<KEY, VALUE>>
 	{
 		Assert<!aeos::contains<M, KEY>>;
 	};
 
-	export template <map M, typename KEY, typename VALUE>
+	template <map M, typename KEY, typename VALUE>
 	struct Apply<M, ModifyAt<KEY, VALUE>>: Apply<M, SetAt<KEY, VALUE>>
 	{
 		Assert<aeos::contains<M, KEY>>;
 	};
 
-	export template <map M, typename KEY>
+	template <map M, typename KEY>
 	struct Apply<M, EraseAt<KEY>>: AppliedMapBase
 	{
 	private:
@@ -119,7 +122,7 @@ namespace aeos
 		using Contains = aeos::Contains<This, K>;
 	};
 
-	export template<map M, typename KEY>
+	template<map M, typename KEY>
 	struct Apply<M, RemoveAt<KEY>>: Apply<M, EraseAt<KEY>>
 	{
 		Assert<aeos::contains<M, KEY>>;

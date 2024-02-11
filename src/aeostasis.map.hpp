@@ -1,13 +1,13 @@
-export module aeostasis.map;
-export import aeostasis.map.conceptual;
-export import aeostasis.map.fetch_order;
-export import aeostasis.map.operation;
-import aeostasis.utility.occasion;
-import aeostasis.utility.value_container;
+# pragma once
+# include "aeostasis.map.conceptual.hpp"
+# include "aeostasis.map.fetch_order.hpp"
+# include "aeostasis.map.operation.hpp"
+# include "aeostasis.utility.occasion.hpp"
+# include "aeostasis.utility.value_container.hpp"
 
 namespace aeos
 {
-	export struct EmptyMap
+	struct EmptyMap
 	{
 		// Always invokes an error.
 		template <typename T, map M1 = EmptyMap> using Get = Assert<false, T>;
