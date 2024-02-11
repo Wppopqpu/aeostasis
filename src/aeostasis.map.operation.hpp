@@ -25,29 +25,16 @@ namespace aeos
 
 	// The implementation.
 
-	namespace
+
+	template <map M, typename... OPERATIONS>
+	struct Apply
 	{
-		struct AppliedMap_base {};
-		template <typename T>
-		concept applied_map = std::derived_from<T, AppliedMap_base> || map<T>;
-
-		template <map T>
-		struct Wrapper: T, AppliedMap_base 
-		{
-			template <typename K, map M1>
-			using Get = typename T::template Get<K>;
-		};
-	}
-
+	};
 	
-	template <applied_map M, typename FIRST, typename... ORDERS>
-	struct Apply: Apply<Apply<M, FIRST>, ORDERS...> {};
 
-	template <map M,typename FIRST, typename...ORDERS> 
-	struct Apply<M, FIRST, ORDERS...>: Apply<Apply<Wrapper<M, FIRST>, ORDERS...> {};
 
 	template <map M, typename KEY, typename VALUE>
-	struct Apply<M, SetAt<KEY, VALUE>>: AppliedMap_base
+	struct Apply<M, SetAt<KEY, VALUE>>
 	{
 	private:
 		using This = Apply<M, SetAt<KEY, VALUE>>;
@@ -92,7 +79,7 @@ namespace aeos
 	};
 
 	template <map M, typename KEY>
-	struct Apply<M, EraseAt<KEY>>: AppliedMapBase
+	struct Apply<M, EraseAt<KEY>>
 	{
 	private:
 
