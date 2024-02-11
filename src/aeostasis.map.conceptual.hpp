@@ -5,19 +5,16 @@
 
 namespace aeos
 {
-	// You can only provide Get<> if you want to create your own map;
-	// every map that aeos provides also has Applied<>, Contains<>, contains<>,
-	// which along with Get<> can be accessed by class name.
+	// Take advantage of template template parameters
+	// to check requirements.
 	namespace
 	{
-		template <typename T> struct Helper
+		template <template <typename...> typename T> struct Helper
 		{
-			// Notice that Get<> may have several parameters.
-			template <typename K> using Type = typename T::template Get<K>;
 		};
 	}
 	template <typename T> concept map = requires {
-		typename Helper<T>;
+		typename Helper<T::template Get>;
 	};
 
 	template <map T, typename K>
