@@ -25,9 +25,12 @@ namespace aeos
 
 	// The implementation.
 
-	struct AppliedMap_base {};
-	template <typename T>
-	concept applied_map = std::derived_from<T, AppliedMap_base> || map<T>;
+	namespace
+	{
+		struct AppliedMap_base {};
+		template <typename T>
+		concept applied_map = std::derived_from<T, AppliedMap_base> || map<T>;
+	}
 	
 	template <applied_map M, typename FIRST, typename... ORDERS>
 	struct Apply: Apply<Apply<M, FIRST>, ORDERS...> {};
