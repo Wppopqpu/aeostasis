@@ -30,13 +30,7 @@ namespace aeos
 		struct AppliedMap_base {};
 		template <typename T>
 		concept applied_map = std::derived_from<T, AppliedMap_base> || map<T>;
-	}
-	
-	template <applied_map M, typename FIRST, typename... ORDERS>
-	struct Apply: Apply<Apply<M, FIRST>, ORDERS...> {};
 
-	namespace
-	{
 		template <map T>
 		struct Wrapper: T, AppliedMap_base 
 		{
@@ -44,6 +38,10 @@ namespace aeos
 			using Get = typename T::template Get<K>;
 		};
 	}
+
+	
+	template <applied_map M, typename FIRST, typename... ORDERS>
+	struct Apply: Apply<Apply<M, FIRST>, ORDERS...> {};
 
 	template <map M,typename FIRST, typename...ORDERS> 
 	struct Apply<M, FIRST, ORDERS...>: Apply<Apply<Wrapper<M, FIRST>, ORDERS...> {};
