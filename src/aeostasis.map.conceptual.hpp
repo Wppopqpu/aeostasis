@@ -9,7 +9,7 @@ namespace aeos
 	// to check requirements.
 	namespace
 	{
-		template <template <typename...> typename T> struct Helper
+		template <template <typename> typename T> struct Helper
 		{
 		};
 	}
