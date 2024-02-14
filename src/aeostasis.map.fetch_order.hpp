@@ -4,6 +4,7 @@
 
 namespace aeos
 {
+	// Export.
 	struct FetchOrder_base {};
 
 

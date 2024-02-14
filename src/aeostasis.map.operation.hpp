@@ -6,7 +6,10 @@
 # include "aeostasis.map.conceptual.hpp"
 # include "aeostasis.map.fetch_order.hpp"
 # include "aeostasis.utility.occasion.hpp"
+# include "aeostasis.utility.error.hpp"
+# include "aeostasis.utility.oo.hpp"
 # include <concepts>
+# include <string>
 
 namespace aeos
 {
@@ -21,19 +24,57 @@ namespace aeos
 	// RemoveAt<> requires that the key does exist.
 	template <typename KEY> struct EraseAt {};
 	template <typename KEY> struct RemoveAt {};
+	
+	// Apply with an particular key.
+	template <typename KEY> struct ApplyWith {};
 
 
 	// The implementation.
-
-
-	template <map M, typename... OPERATIONS>
-	struct Apply
-	{
-	};
 	
 
 
-	template <map M, typename KEY, typename VALUE>
+	// Turn non-applied maps into applied ones.
+	// (See the wrapper defined below.)
+	template <map M, typename... ORDERS>
+	struct Apply: Apply<Apply<M>, ORDERS...>
+	{
+	};
+
+
+	// Wrapper to provide interfaces for lazy loading.
+	template <map M>
+	struct Apply<M>: M
+	{
+		template <typename K,typename M2>
+		using Get = typename M::template At<K>;
+	};
+
+
+	// Wrapper to provide more interfaces for convenience.
+	namespace
+	{
+		template <map M>
+		struct Complement: M
+		{
+			template <typename ... ORDERS>
+			using Applied = aeos::Apply<M, ORDERS...>;
+			
+			template <typename K>
+			inline static constexpr bool contains = aeos::contains<M, K>;
+
+			template <typename K>
+			using Contains = aeos::Contains<M, K>;
+		};
+	}
+
+	// Apply the operation one by one.
+	template <applied_map M, typename FIRST, typename... ORDERS>
+	struct Apply<M, FIRST, ORDERS...>
+		: Complement<Apply<Apply<M, FIRST>, ORDERS...>>
+	{
+	};
+
+	template <applied_map M, typename KEY, typename VALUE>
 	struct Apply<M, SetAt<KEY, VALUE>>
 	{
 	private:
@@ -55,27 +96,38 @@ namespace aeos
 		
 		template <typename K, map M1 = M>
 		using Get = Get_impl<K, M1>::Type;
-
-		template <typename... ORDERS>
-		using Applied = aeos::Apply<This, ORDERS...>;
-
-		template <typename K>
-		static constexpr bool contains = aeos::contains<This, K>;
-
-		template <typename K>
-		using Contains = aeos::Contains<This, K>;
 	};
 
-	template <map M, typename KEY, typename VALUE>
-	struct Apply<M, AddAt<KEY, VALUE>>: Apply<M, SetAt<KEY, VALUE>>
+	template <applied_map M, typename KEY, typename VALUE>
+	struct Apply<M, AddAt<KEY, VALUE>>
+		: If
+			< !contains<M, KEY>
+			, Apply<M, SetAt<KEY, VALUE>>
+			, CommonChild
+				< NullMap
+				, WithError
+					< Apply<M, AddAt<KEY, VALUE>>
+					, "aeos::AddAt: Key already exists."
+					>
+				>
+			>
 	{
-		Assert<!aeos::contains<M, KEY>>;
 	};
 
-	template <map M, typename KEY, typename VALUE>
-	struct Apply<M, ModifyAt<KEY, VALUE>>: Apply<M, SetAt<KEY, VALUE>>
+	template <applied_map M, typename KEY, typename VALUE>
+	struct Apply<M, ModifyAt<KEY, VALUE>>
+		: If
+			< contains<M, KEY>
+			, Apply<M, SetAt<KEY, VALUE>>
+			, CommonChild
+				< NullMap
+				, WithError
+					<Apply<M, ModifyAt<KEY, VALUE>>
+					, "aeos::ModifyAt: Key does NOT exists."
+					>
+				>
+			>
 	{
-		Assert<aeos::contains<M, KEY>>;
 	};
 
 	template <map M, typename KEY>
@@ -99,21 +151,22 @@ namespace aeos
 
 		template <typename K, map M1 = M>
 		using Get = typename Get_impl<K, M1>::Type;
-
-		template <typename... ORDERS>
-		using Applied = Apply<This, ORDERS...>;
-
-		template <typename K>
-		static constexpr bool contains = aeos::contains<This, K>;
-
-		template <typename K>
-		using Contains = aeos::Contains<This, K>;
 	};
 
 	template<map M, typename KEY>
-	struct Apply<M, RemoveAt<KEY>>: Apply<M, EraseAt<KEY>>
+	struct Apply<M, RemoveAt<KEY>>
+		: If
+			< contains<M, KEY>
+			, Apply<M, EraseAt<KEY>>
+			, CommonChild
+				< NullMap
+				, WithError
+					< Apply<M, RemoveAt<KEY>>
+					, "aeos::RemoveAt: Key does not exists."
+					>
+				>
+			>
 	{
-		Assert<aeos::contains<M, KEY>>;
 	};
 	
 } // Namespace.
