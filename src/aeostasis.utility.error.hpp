@@ -1,6 +1,5 @@
 # pragma once
 # include <concepts>
-# include <string_view>
 namespace aeos
 {
 	struct Null {};
@@ -11,15 +10,15 @@ namespace aeos
 	template <typename T>
 	concept nonnull = !null<T>;
 
-	template <typename T, std::string_view & TEXT>
+	template <typename T, char const TEXT[]>
 	struct WithError: Null
 	{
-		inline static constexpr char const* error { TEXT.data() };
+		inline static constexpr char const* error { TEXT };
 	};
 
-	template <typename T, std::string_view & TEXT>
+	template <typename T, char const TEXT[]>
 		requires requires {
-			{ T::error } -> std::convertible_to<char const*>;
+			{ T::error } -> std::convertible_to<char const*const>;
 		}
 	struct WithError<T, TEXT>: Null
 	{
