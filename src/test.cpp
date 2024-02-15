@@ -36,6 +36,7 @@ using MapB = MapA::Applied
 	>;
 
 static_assert(nonnull<MapB>);
+static_assert(nonnull<MapB::At<Index<2>>>);
 static_assert(std::same_as
 	< MapB::At<Index<2>>
 	, Template<Index<1>, Index<3>>
