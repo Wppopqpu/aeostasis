@@ -5,13 +5,14 @@
 # include "aeostasis.map.operation.hpp"
 # include "aeostasis.utility.occasion.hpp"
 # include "aeostasis.utility.value_container.hpp"
+# include "aeostasis.utility.error.hpp"
 
 namespace aeos
 {
 	struct EmptyMap
 	{
 		// Always invokes an error.
-		template <typename T, map M1 = EmptyMap> using Get = Assert<false, T>;
+		template <typename T, map M1 = EmptyMap> using Get = Null;
 
 		template <typename T> using At = Get<T>;
 
@@ -22,9 +23,9 @@ namespace aeos
 		using Contains = False;
 
 		template <typename K>
-		static constexpr bool contains = false;
+		inline static constexpr bool contains = false;
 	};
-	static_assert(map<EmptyMap>);
+	static_assert(applied_map<EmptyMap>);
 
 
 } // Namespace.
