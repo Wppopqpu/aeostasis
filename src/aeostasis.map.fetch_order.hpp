@@ -39,7 +39,8 @@ namespace aeos
 	template <typename T>
 	struct Fetch<Fetch<T>>
 	{
-		template <map M, map M1 = M> using Get = typename Fetch<T>::template Get<M1>;
+		template <map M, map M1 = M>
+		using Get = typename Fetch<T>::template Get<M1>;
 	};
 	template <typename T, map M, map M1 = M>
 	using From = typename Fetch<T>::template Get<M, M1>;
@@ -53,7 +54,7 @@ namespace aeos
 	template <typename KEY>
 	struct At: FetchOrder_base
 	{
-		template <map M> using Get = typename M::template Get<KEY>;
+		template <map M> using Get = typename M::template At<KEY>;
 	};
 
 	template <template <typename...> typename TEMPLATE

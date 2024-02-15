@@ -1,3 +1,4 @@
+// TODO: implement ApplyWith
 // This file enables you to modify maps.
 // Generally, you write code like this:
 //
@@ -46,7 +47,7 @@ namespace aeos
 	template <map M>
 	struct Apply<M>: M
 	{
-		template <typename K,typename M2>
+		template <typename K,applied_map M2>
 		using Get = typename M::template At<K>;
 	};
 
@@ -64,12 +65,12 @@ namespace aeos
 	private:
 		using This = Apply<M, SetAt<KEY, VALUE>>;
 
-		template <typename K, map M1>
+		template <typename K, applied_map M1>
 		struct Get_impl
 		{
 			using Type = typename M::template Get<K, M1>;
 		};
-		template <typename K, map M1>
+		template <typename K, applied_map M1>
 			requires std::same_as<From<K, M, M1>, From<KEY, M, M1>>
 		struct Get_impl<K, M1>
 		{
@@ -78,7 +79,7 @@ namespace aeos
 
 	public:
 		
-		template <typename K, map M1 = M>
+		template <typename K, applied_map M1 = M>
 		using Get = Get_impl<K, M1>::Type;
 
 		template <typename K>
@@ -133,13 +134,13 @@ namespace aeos
 
 		using This = Apply<M, EraseAt<KEY>>;
 
-		template <typename K, map M1>
+		template <typename K, applied_map M1>
 		struct Get_impl 
 		{
 			using Type = Null;
 		};
 
-		template <typename K, map M1>
+		template <typename K, applied_map M1>
 			requires (!std::same_as<From<K, M, M1>, From<KEY, M, M1>>)
 		struct Get_impl<K, M1>
 		{
@@ -148,7 +149,7 @@ namespace aeos
 
 	public:
 
-		template <typename K, map M1 = M>
+		template <typename K, applied_map M1 = M>
 		using Get = typename Get_impl<K, M1>::Type;
 
 		template <typename K>

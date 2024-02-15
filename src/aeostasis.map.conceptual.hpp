@@ -32,7 +32,7 @@ namespace aeos
 	// (See operation ApplyWith.)
 	namespace
 	{
-		template <template <typename, map> typename T>
+		template <template <typename, typename> typename T>
 		struct Helper2
 		{
 		};
@@ -71,7 +71,7 @@ namespace aeos
 
 	struct EmptyMap
 	{
-		template <typename K, map M>
+		template <typename K, typename M>
 		using Get = Null;
 
 		template <typename K>

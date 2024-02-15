@@ -30,11 +30,12 @@ using MapB = MapA::Applied
 		, AsTemplate
 			< Template
 			, At<Index<0>>
-		, At<Index<2>>
+			, At<Index<2>>
 			>
 		>
 	>;
 
+static_assert(nonnull<MapB>);
 static_assert(std::same_as
 	< MapB::At<Index<2>>
 	, Template<Index<1>, Index<3>>
