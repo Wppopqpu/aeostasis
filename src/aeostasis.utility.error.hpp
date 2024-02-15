@@ -1,4 +1,5 @@
 # pragma once
+# include "aeostasis.string.hpp"
 # include <concepts>
 namespace aeos
 {
@@ -10,13 +11,13 @@ namespace aeos
 	template <typename T>
 	concept nonnull = !null<T>;
 
-	template <typename T, char const TEXT[]>
+	template <typename T, String TEXT>
 	struct WithError: Null
 	{
-		inline static constexpr char const* error { TEXT };
+		inline static constexpr char const* error { TEXT.text };
 	};
 
-	template <typename T, char const TEXT[]>
+	template <typename T, String TEXT>
 		requires requires {
 			{ T::error } -> std::convertible_to<char const*const>;
 		}

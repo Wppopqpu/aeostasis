@@ -8,13 +8,10 @@
 # include "aeostasis.utility.occasion.hpp"
 # include "aeostasis.utility.error.hpp"
 # include "aeostasis.utility.oo.hpp"
-# include "aeostasis.string.hpp"
 # include <concepts>
-# include <version>
 
 namespace aeos
 {
-	static_assert( __cpp_nontype_template_args > 201911); 
 	// A set of operations.(Tags.)
 	
 	// AddAt<> requires that the key does NOT exist;
@@ -109,7 +106,7 @@ namespace aeos
 				< NullMap
 				, WithError
 					< Apply<M, AddAt<KEY, VALUE>>
-					, "aeos::AddAt: Key already exists."_s
+					, "aeos::AddAt: Key already exists."
 					>
 				>
 			>
@@ -125,7 +122,7 @@ namespace aeos
 				< NullMap
 				, WithError
 					<Apply<M, ModifyAt<KEY, VALUE>>
-					, "aeos::ModifyAt: Key does NOT exists."_s
+					, "aeos::ModifyAt: Key does NOT exists."
 					>
 				>
 			>
@@ -140,7 +137,10 @@ namespace aeos
 		using This = Apply<M, EraseAt<KEY>>;
 
 		template <typename K, map M1>
-		struct Get_impl {};
+		struct Get_impl 
+		{
+			using Type = Null;
+		};
 
 		template <typename K, map M1>
 			requires (!std::same_as<From<K, M, M1>, From<KEY, M, M1>>)

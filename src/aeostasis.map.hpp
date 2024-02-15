@@ -1,4 +1,5 @@
 # pragma once
+
 # include "aeostasis.map.conceptual.hpp"
 # include "aeostasis.map.fetch_order.hpp"
 # include "aeostasis.map.operation.hpp"
@@ -11,6 +12,8 @@ namespace aeos
 	{
 		// Always invokes an error.
 		template <typename T, map M1 = EmptyMap> using Get = Assert<false, T>;
+
+		template <typename T> using At = Get<T>;
 
 		template <typename... ORDERS>
 		using Applied = Apply<EmptyMap, ORDERS...>;

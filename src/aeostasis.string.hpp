@@ -4,28 +4,31 @@
 
 namespace aeos
 {
-	namespace
+	static_assert(__cpp_nontype_template_args >= 201911L);
+
+	template <std::size_t N>
+	struct String
 	{
-		template <std::size_t N>
-		class String
-		{
-			constexpr String(char const (&text)[N]) {
-				std::ranges::copy(text, m_text);
-			}
+		inline static constexpr auto size { N };
+
+		constexpr String(char const (&text)[N]) {
+			std::ranges::copy(text, this->text);
+		}
 
 
-			char m_text[N] {};
-		};
-	}
+		char text[N] {};
+	};
 
+	/*
 	inline namespace literals
 	{
 		inline namespace string_literals
 		{
 			template <String S>
-			constexpr decltype(auto) operator ""_s() {
-				return S.m_text;
+			constexpr String operator ""_s() {
+				return S;
 			}
 		}
 	}
+	*/
 }
