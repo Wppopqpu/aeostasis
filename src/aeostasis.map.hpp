@@ -9,23 +9,5 @@
 
 namespace aeos
 {
-	struct EmptyMap
-	{
-		// Always invokes an error.
-		template <typename T, map M1 = EmptyMap> using Get = Null;
-
-		template <typename T> using At = Get<T>;
-
-		template <typename... ORDERS>
-		using Applied = Apply<EmptyMap, ORDERS...>;
-
-		template <typename K>
-		using Contains = False;
-
-		template <typename K>
-		inline static constexpr bool contains = false;
-	};
-	static_assert(applied_map<EmptyMap>);
-
 
 } // Namespace.

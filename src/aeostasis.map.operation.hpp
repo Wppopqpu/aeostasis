@@ -31,11 +31,13 @@ namespace aeos
 	// The implementation.
 	
 
+	// For the original definition of struct Apply,
+	// vide aeostasis.map.conceptual.hpp.
 
 	// Turn non-applied maps into applied ones.
 	// (See the wrapper defined below.)
 	template <map M, typename... ORDERS>
-	struct Apply: Apply<Apply<M>, ORDERS...>
+	struct Apply<M, ORDERS...>: Apply<Apply<M>, ORDERS...>
 	{
 	};
 
@@ -49,27 +51,10 @@ namespace aeos
 	};
 
 
-	// Wrapper to provide more interfaces for convenience.
-	namespace
-	{
-		template <map M>
-		struct Complement: M
-		{
-			template <typename ... ORDERS>
-			using Applied = aeos::Apply<M, ORDERS...>;
-			
-			template <typename K>
-			inline static constexpr bool contains = aeos::contains<M, K>;
-
-			template <typename K>
-			using Contains = aeos::Contains<M, K>;
-		};
-	}
-
 	// Apply the operation one by one.
 	template <applied_map M, typename FIRST, typename... ORDERS>
 	struct Apply<M, FIRST, ORDERS...>
-		: Complement<Apply<Apply<M, FIRST>, ORDERS...>>
+		: Apply<Apply<M, FIRST>, ORDERS...>
 	{
 	};
 
@@ -95,6 +80,18 @@ namespace aeos
 		
 		template <typename K, map M1 = M>
 		using Get = Get_impl<K, M1>::Type;
+
+		template <typename K>
+		using At = Get<K>;
+
+		template <typename... ORDERS>
+		using Applied = aeos::Apply<This, ORDERS...>;
+
+		template <typename K>
+		using Contains = aeos::Contains<This, K>;
+
+		template <typename K>
+		inline static constexpr bool contains { aeos::contains<This, K> };
 	};
 
 	template <applied_map M, typename KEY, typename VALUE>
@@ -153,6 +150,18 @@ namespace aeos
 
 		template <typename K, map M1 = M>
 		using Get = typename Get_impl<K, M1>::Type;
+
+		template <typename K>
+		using At = Get<K>;
+
+		template <typename... ORDERS>
+		using Applied = aeos::Apply<This, ORDERS...>;
+
+		template <typename K>
+		using Contains = aeos::Contains<This, K>;
+
+		template <typename K>
+		inline static constexpr bool contains { aeos::contains<This, K> };
 	};
 
 	template<map M, typename KEY>

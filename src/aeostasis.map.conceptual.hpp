@@ -1,8 +1,10 @@
 // This file defines the basic concepts of map,
 // which is used by other submodules.
+// Several basic kinds of map are also defined here.
 # pragma once
 # include "aeostasis.utility.value_container.hpp"
 # include "aeostasis.utility.error.hpp"
+# include "aeostasis.utility.oo.hpp"
 
 namespace aeos
 {
@@ -34,18 +36,24 @@ namespace aeos
 		struct Helper2
 		{
 		};
+
+		// applied only requires providing Get<>.
+		template <typename T>
+		concept applied = requires {
+			typename Helper2<T::template Get>;
+		};
 	}
 	// applied_map implies map.
 	template <typename T>
-	concept applied_map = requires {
-		typename Helper2<T::template Get>;
-	} && map<T>;
+	concept applied_map = applied<T> && map<T>;
 
 
 
 
 	template <map T, typename K>
-	constexpr bool contains = requires { typename T::template At<K>; };
+	constexpr bool contains = requires {
+		requires nonnull<typename T::template At<K>>; 
+	};
 
 	template <map T, typename K>
 	using Contains = Boolean<contains<T, K>>;
@@ -55,26 +63,35 @@ namespace aeos
 	template <typename K, typename T>
 	concept not_contained_by = ! contained_by<K, T>;
 
-	
-	// Null map (contains an error).
-	// Derived fron this class and defines tyop error.
-	struct NullMap: Null
+	template <typename... TS>
+	struct Apply
 	{
+		static_assert(false, "aeos::Apply: Invalid application.");
+	};
+
+	struct EmptyMap
+	{
+		template <typename K, map M>
+		using Get = Null;
+
 		template <typename K>
 		using At = Null;
 
-		template <typename K, map M2>
-		using Get = Null;
-
 		template <typename... ORDERS>
-		using Applied = NullMap;
-
-		template <typename K>
-		inline static constexpr bool contains = false;
+		using Applied = aeos::Apply<EmptyMap, ORDERS...>;
 
 		template <typename K>
 		using Contains = False;
+
+		template <typename K>
+		inline static constexpr bool contains { false };
 	};
+
+	
+	// Null map (contains an error).
+	// Derived fron this class and defines tyop error.
+	using NullMap = CommonChild<EmptyMap, Null>;
+
 	static_assert(null<NullMap>);
 	static_assert(applied_map<NullMap>);
 

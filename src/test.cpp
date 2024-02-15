@@ -1,16 +1,17 @@
-# include "aeostasis.map.hpp"
-# include "aeostasis.utility.hpp"
+# include "aeostasis.hpp"
+# include "aeostasis.hpp"
 # include <concepts>
 
 using namespace aeos;
 
-Assert<true>;
 
 template <typename... T> struct Template {};
 
 using Map1 = EmptyMap::Applied<AddAt<int, int>>;
 
-static_assert(std::same_as<Map1::Get<int>, int>);
+static_assert(nonnull<Map1>);
+
+static_assert(std::same_as<Map1::At<int>, int>);
 
 //static_assert(false);
 
@@ -20,7 +21,7 @@ using MapA = EmptyMap::Applied
 	, AddAt<Index<10>, Index<2>>
 	>;
 
-static_assert(std::same_as<MapA::Get<Index<10>>, Index<2>>);
+static_assert(std::same_as<MapA::At<Index<10>>, Index<2>>);
 
 
 using MapB = MapA::Applied
@@ -35,7 +36,7 @@ using MapB = MapA::Applied
 	>;
 
 static_assert(std::same_as
-	< MapB::Get<Index<2>>
+	< MapB::At<Index<2>>
 	, Template<Index<1>, Index<3>>
 	>);
 
@@ -45,7 +46,7 @@ using MapC = EmptyMap::Applied
 	, SetAt<long, unsigned>
 	, ModifyAt<long, short>
 	>;
-static_assert(std::same_as<short, MapC::Get<long>>);
-static_assert(std::same_as<short, MapC::Get<int>>);
+static_assert(std::same_as<short, MapC::At<long>>);
+static_assert(std::same_as<short, MapC::At<int>>);
 
 
